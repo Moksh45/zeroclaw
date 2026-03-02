@@ -1075,6 +1075,10 @@ fn curated_models_for_provider(provider_name: &str) -> Vec<(String, String)> {
         ],
         "openai-codex" => vec![
             (
+                "gpt-5.3-codex".to_string(),
+                "GPT-5.3 Codex (latest codex generation)".to_string(),
+            ),
+            (
                 "gpt-5-codex".to_string(),
                 "GPT-5 Codex (recommended)".to_string(),
             ),
@@ -7960,6 +7964,7 @@ mod tests {
             .map(|(id, _)| id)
             .collect();
 
+        assert!(ids.contains(&"gpt-5.3-codex".to_string()));
         assert!(ids.contains(&"gpt-5-codex".to_string()));
         assert!(ids.contains(&"gpt-5.2-codex".to_string()));
     }
@@ -8615,8 +8620,14 @@ mod tests {
             &["ANTHROPIC_OAUTH_TOKEN"]
         );
         assert_eq!(provider_env_var_fallbacks("gemini"), &["GOOGLE_API_KEY"]);
-        assert_eq!(provider_env_var_fallbacks("minimax"), &["MINIMAX_OAUTH_TOKEN"]);
-        assert_eq!(provider_env_var_fallbacks("volcengine"), &["DOUBAO_API_KEY"]);
+        assert_eq!(
+            provider_env_var_fallbacks("minimax"),
+            &["MINIMAX_OAUTH_TOKEN"]
+        );
+        assert_eq!(
+            provider_env_var_fallbacks("volcengine"),
+            &["DOUBAO_API_KEY"]
+        );
     }
 
     #[tokio::test]
