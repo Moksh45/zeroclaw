@@ -4369,7 +4369,7 @@ pub struct PinggyTunnelConfig {
     /// Pinggy access token (optional — free tier works without one).
     #[serde(default)]
     pub token: Option<String>,
-    /// Server region: `"us"`, `"eu"`, `"ap"`, or omit for auto.
+    /// Server region: `"us"` (USA), `"eu"` (Europe), `"ap"` (Asia), `"br"` (South America), `"au"` (Australia), or omit for auto.
     #[serde(default)]
     pub region: Option<String>,
 }
@@ -8547,6 +8547,18 @@ impl Config {
 
         // Proxy (delegate to existing validation)
         self.proxy.validate()?;
+
+        // Pinggy tunnel region
+        if let Some(ref pinggy) = self.tunnel.pinggy {
+            if let Some(ref region) = pinggy.region {
+                let r = region.trim().to_ascii_lowercase();
+                if !r.is_empty() && !matches!(r.as_str(), "us" | "eu" | "ap" | "br" | "au") {
+                    anyhow::bail!(
+                        "tunnel.pinggy.region must be one of: us, eu, ap, br, au (or omitted for auto)"
+                    );
+                }
+            }
+        }
 
         // Delegate coordination runtime safety bounds.
         if self.coordination.enabled && self.coordination.lead_agent.trim().is_empty() {
